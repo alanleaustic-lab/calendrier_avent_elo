@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendrier de l'Avent 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bordeaux: #812b45;
+  --rose: #c65377;
+  --rose-clair: #db7895;
+  --peche: #ffb18d;
+  --creme: #ffe2c1;
+  --turquoise: #278f8d;
+  --vert: #236c65;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 35px 20px 65px;
+  background: var(--bordeaux);
+  color: var(--peche);
+  font-family: "DM Sans", sans-serif;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+/* CONTENU */
+
+.calendar-wrapper {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1100px);
+  margin: 0 auto;
+}
+
+h1 {
+  margin: 18px 0 12px;
+  color: var(--peche);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(2.8rem, 7vw, 5rem);
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: -2px;
+}
+
+.year {
+  display: inline-block;
+  margin-top: 14px;
+  color: var(--creme);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.4rem;
+  letter-spacing: 5px;
+}
+
+.subtitle {
+  margin: 15px 0 48px;
+  color: var(--creme);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  font-style: italic;
+}
+
+/* GRILLE */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 25px 18px;
+  width: 100%;
+  max-width: 1030px;
+  margin: 0 auto;
+}
+
+/* CASES */
+
+.day {
+  --blob-color: var(--rose);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 155px;
+  padding: 15px;
+  border: 0;
+  background: transparent;
+  color: var(--creme);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 2.6rem;
+  font-weight: 900;
+  cursor: pointer;
+  isolation: isolate;
+  transition: transform 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* MÉDAILLONS IRRÉGULIERS */
+
+.day::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  z-index: -1;
+  background: var(--blob-color);
+  border-radius: 41% 48% 39% 45% / 46% 39% 49% 42%;
+  transform: rotate(-5deg);
+  box-shadow: 0 6px 0 rgba(70, 13, 34, 0.16);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.day:nth-child(2n)::before {
+  border-radius: 47% 38% 46% 40% / 39% 48% 41% 47%;
+  transform: rotate(5deg);
+}
+
+.day:nth-child(3n)::before {
+  border-radius: 38% 47% 43% 49% / 49% 40% 46% 38%;
+  transform: rotate(-8deg);
+}
+
+.day.green {
+  --blob-color: #c65377;
+}
+
+.day.red {
+  --blob-color: #b9496d;
+}
+
+.day.brown {
+  --blob-color: #d16b85;
+}
+
+.day.gold {
+  --blob-color: #c85c7c;
+}
+
+.day.cream {
+  --blob-color: #d87591;
+}
+
+.day:hover {
+  transform: translateY(-5px) scale(1.04);
+}
+
+.day:hover::before {
+  background: var(--rose-clair);
+  transform: rotate(0deg) scale(1.05);
+}
+
+.day:focus-visible {
+  outline: 3px solid var(--creme);
+  outline-offset: 3px;
+  border-radius: 30px;
+}
+
+.day-number {
+  position: relative;
+  z-index: 3;
+  transform: translate(-13px, -8px);
+  text-shadow: 0 2px 2px rgba(95, 25, 47, 0.16);
+}
+
+/* ILLUSTRATIONS TRANSPARENTES */
+
+.illustration {
+  position: absolute;
+  right: -6px;
+  bottom: -5px;
+  z-index: 2;
+  width: 91px;
+  height: 91px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.illustration svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  background: transparent;
+}
+
+/* MARQUAGE DES CASES VISITÉES */
+
+.day.opened:not(.locked)::after {
+  content: "✓";
+  position: absolute;
+  top: 15px;
+  right: 22px;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--turquoise);
+  color: white;
+  font-family: sans-serif;
+  font-size: 13px;
+}
+
+.day.opened:not(.locked)::before {
+  filter: saturate(0.8);
+}
+
+
+/* CASES VERROUILLÉES JUSQU'À LEUR DATE */
+.day.locked {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.day.locked:hover {
+  transform: none;
+}
+
+.day.locked:hover::before {
+  background: var(--blob-color);
+  transform: rotate(-5deg);
+}
+
+.lock-icon {
+  position: absolute;
+  top: 13px;
+  right: 19px;
+  z-index: 4;
+  font-family: sans-serif;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.day:not(.locked) .lock-icon {
+  display: none;
+}
+
+/* DÉCORATIONS DES COINS */
+
+.corner {
+  position: absolute;
+  z-index: 0;
+  width: clamp(110px, 18vw, 230px);
+  height: auto;
+  pointer-events: none;
+}
+
+.corner svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.corner.top-left {
+  top: 0;
+  left: 0;
+}
+
+.corner.top-right {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+
+.corner.bottom-left {
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+
+.corner.bottom-right {
+  bottom: 0;
+  right: 0;
+  transform: scale(-1);
+}
+
+/* PETITES ÉTOILES DÉCORATIVES */
+
+.sparkle {
+  position: absolute;
+  color: var(--peche);
+  opacity: 0.85;
+  pointer-events: none;
+  font-size: 22px;
+}
+
+.sparkle.one {
+  top: 180px;
+  left: 8%;
+}
+
+.sparkle.two {
+  top: 230px;
+  right: 8%;
+}
+
+.sparkle.three {
+  bottom: 70px;
+  left: 12%;
+}
+
+.sparkle.four {
+  bottom: 120px;
+  right: 11%;
+}
+
+/* FLOCONS */
+
+.snow {
+  position: fixed;
+  top: -15px;
+  z-index: 5;
+  pointer-events: none;
+  color: var(--creme);
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh);
+  }
+}
+
+/* TABLETTE */
+
+@media (max-width: 850px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px 12px;
+  }
+
+  .day {
+    min-height: 140px;
+  }
+
+  .illustration {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  body {
+    padding: 35px 12px 45px;
+  }
+
+  h1 {
+    margin-top: 65px;
+    letter-spacing: -1px;
+  }
+
+  .subtitle {
+    margin-bottom: 30px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 8px;
+  }
+
+  .day {
+    min-height: 112px;
+    padding: 8px;
+    font-size: 2rem;
+  }
+
+  .day-number {
+    transform: translate(-8px, -8px);
+  }
+
+  .illustration {
+    width: 61px;
+    height: 61px;
+    right: -5px;
+    bottom: -3px;
+  }
+
+  .day.opened:not(.locked)::after {
+    top: 8px;
+    right: 10px;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+
+  .corner {
+    width: 115px;
+  }
+
+  .sparkle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .day,
+  .day::before {
+    transition: none;
+  }
+
+  .snow {
+    display: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- FEUILLAGES DÉCORATIFS -->
+
+<div class="corner top-left" aria-hidden="true">
+  <svg viewBox="0 0 230 230" xmlns="http://www.w3.org/2000/svg">
+    <path d="M-10 5 Q70 30 115 105 Q140 150 185 180"
+      fill="none" stroke="#278f8d" stroke-width="8" stroke-linecap="round"/>
+
+    <g fill="#278f8d">
+      <ellipse cx="28" cy="30" rx="16" ry="34" transform="rotate(-48 28 30)"/>
+      <ellipse cx="72" cy="45" rx="15" ry="34" transform="rotate(30 72 45)"/>
+      <ellipse cx="68" cy="83" rx="15" ry="31" transform="rotate(-48 68 83)"/>
+      <ellipse cx="114" cy="93" rx="14" ry="32" transform="rotate(28 114 93)"/>
+      <ellipse cx="113" cy="132" rx="14" ry="30" transform="rotate(-50 113 132)"/>
+      <ellipse cx="160" cy="151" rx="13" ry="30" transform="rotate(30 160 151)"/>
+    </g>
+
+    <g fill="#e58d77">
+      <circle cx="65" cy="115" r="10"/>
+      <circle cx="84" cy="119" r="9"/>
+      <circle cx="75" cy="134" r="9"/>
+      <circle cx="162" cy="191" r="8"/>
+      <circle cx="179" cy="196" r="8"/>
+      <circle cx="172" cy="179" r="8"/>
+    </g>
+
+    <path d="M8 160 L13 174 L27 179 L13 184 L8 198 L3 184 L-11 179 L3 174 Z"
+      fill="#ffb18d"/>
+  </svg>
+</div>
+
+<div class="corner top-right" aria-hidden="true">
+  <svg viewBox="0 0 230 230" xmlns="http://www.w3.org/2000/svg">
+    <path d="M-10 5 Q70 30 115 105 Q140 150 185 180"
+      fill="none" stroke="#278f8d" stroke-width="8" stroke-linecap="round"/>
+    <g fill="#278f8d">
+      <ellipse cx="28" cy="30" rx="16" ry="34" transform="rotate(-48 28 30)"/>
+      <ellipse cx="72" cy="45" rx="15" ry="34" transform="rotate(30 72 45)"/>
+      <ellipse cx="68" cy="83" rx="15" ry="31" transform="rotate(-48 68 83)"/>
+      <ellipse cx="114" cy="93" rx="14" ry="32" transform="rotate(28 114 93)"/>
+      <ellipse cx="113" cy="132" rx="14" ry="30" transform="rotate(-50 113 132)"/>
+      <ellipse cx="160" cy="151" rx="13" ry="30" transform="rotate(30 160 151)"/>
+    </g>
+    <g fill="#e58d77">
+      <circle cx="65" cy="115" r="10"/>
+      <circle cx="84" cy="119" r="9"/>
+      <circle cx="75" cy="134" r="9"/>
+      <circle cx="162" cy="191" r="8"/>
+      <circle cx="179" cy="196" r="8"/>
+      <circle cx="172" cy="179" r="8"/>
+    </g>
+  </svg>
+</div>
+
+<div class="corner bottom-left" aria-hidden="true">
+  <svg viewBox="0 0 230 230" xmlns="http://www.w3.org/2000/svg">
+    <path d="M-10 5 Q70 30 115 105 Q140 150 185 180"
+      fill="none" stroke="#278f8d" stroke-width="8" stroke-linecap="round"/>
+    <g fill="#278f8d">
+      <ellipse cx="28" cy="30" rx="16" ry="34" transform="rotate(-48 28 30)"/>
+      <ellipse cx="72" cy="45" rx="15" ry="34" transform="rotate(30 72 45)"/>
+      <ellipse cx="68" cy="83" rx="15" ry="31" transform="rotate(-48 68 83)"/>
+      <ellipse cx="114" cy="93" rx="14" ry="32" transform="rotate(28 114 93)"/>
+      <ellipse cx="113" cy="132" rx="14" ry="30" transform="rotate(-50 113 132)"/>
+      <ellipse cx="160" cy="151" rx="13" ry="30" transform="rotate(30 160 151)"/>
+    </g>
+    <g fill="#e58d77">
+      <circle cx="65" cy="115" r="10"/>
+      <circle cx="84" cy="119" r="9"/>
+      <circle cx="75" cy="134" r="9"/>
+    </g>
+  </svg>
+</div>
+
+<div class="corner bottom-right" aria-hidden="true">
+  <svg viewBox="0 0 230 230" xmlns="http://www.w3.org/2000/svg">
+    <path d="M-10 5 Q70 30 115 105 Q140 150 185 180"
+      fill="none" stroke="#278f8d" stroke-width="8" stroke-linecap="round"/>
+    <g fill="#278f8d">
+      <ellipse cx="28" cy="30" rx="16" ry="34" transform="rotate(-48 28 30)"/>
+      <ellipse cx="72" cy="45" rx="15" ry="34" transform="rotate(30 72 45)"/>
+      <ellipse cx="68" cy="83" rx="15" ry="31" transform="rotate(-48 68 83)"/>
+      <ellipse cx="114" cy="93" rx="14" ry="32" transform="rotate(28 114 93)"/>
+      <ellipse cx="113" cy="132" rx="14" ry="30" transform="rotate(-50 113 132)"/>
+      <ellipse cx="160" cy="151" rx="13" ry="30" transform="rotate(30 160 151)"/>
+    </g>
+    <g fill="#e58d77">
+      <circle cx="65" cy="115" r="10"/>
+      <circle cx="84" cy="119" r="9"/>
+      <circle cx="75" cy="134" r="9"/>
+    </g>
+  </svg>
+</div>
+
+<div class="sparkle one" aria-hidden="true">✦</div>
+<div class="sparkle two" aria-hidden="true">✧</div>
+<div class="sparkle three" aria-hidden="true">✧</div>
+<div class="sparkle four" aria-hidden="true">✦</div>
+
+<!-- CALENDRIER -->
+
+<main class="calendar-wrapper">
+
+  <h1>Calendrier<br>de l’Avent</h1>
+  <div class="year">2026</div>
+
+  <p class="subtitle">Édition spéciale certification ✨</p>
+
+  <div class="grid" id="calendar"></div>
+
+</main>
+
+<script>
+
+// ==========================================
+// 1. JOURS DANS LE DÉSORDRE
+// ==========================================
+
+const joursOuvres = [
+  14, 3, 21, 8, 1, 17,
+  10, 24, 4, 15, 7, 22,
+  11, 2, 18, 9, 23, 16
+];
+
+// ==========================================
+// 2. LIENS DES CASES
+// Remplace les adresses Google par tes liens
+// ==========================================
+
+const liens = {
+  1: "https://docs.google.com/forms/d/13dFzpSHXI0pQSNbHOrF6Om5LBxJ38WZ_Rs4alPBd_j8/edit",
+  2: "https://docs.google.com/forms/d/e/1FAIpQLSetX-9wx3IU1wUky_Frko4PAfIUzmhWzTffuXuXokyV9agsYw/viewform?usp=publish-editor",
+  3: "https://forms.gle/b98MMitxRmqcUdAHA",
+  4: "https://forms.gle/BCo2FGhVAicmaWje9",
+  7: "https://forms.gle/fbdL4AoBLm93y5DYA",
+  8: "https://forms.gle/9CNrzqtVMtMi631n8",
+  9: "https://forms.gle/7PGkBdUwwz3twYna7",
+  10: "https://forms.gle/WRgfvgkxv1wR29pL6",
+  11: "https://forms.gle/Jyeqsm7UenCK8zzcA",
+  14: "https://forms.gle/KpyM5yQ84dxhTASBA",
+  15: "https://forms.gle/kXmTWZzCz8rSWcvp7",
+  16: "https://forms.gle/GJxeztBAX9BriTk17",
+  17: "https://forms.gle/hLTxxAXuEC3EF1bX8",
+  18: "https://forms.gle/oFJdD4xMZv2Xb6cC7",
+  21: "https://forms.gle/9LkWXqxdr6TTzAWn7",
+  22: "https://forms.gle/QiTeQhqZqoA7AKTR7",
+  23: "https://forms.gle/BMfFVXW4aC6gFumP9",
+  24: "https://forms.gle/J6eEKsssm8q3uXzn7"
+};
+
+// ==========================================
+// 3. ILLUSTRATIONS DE NOËL
+// SVG sans fond blanc
+// ==========================================
+
+const illustrations = [
+
+  // SAPIN
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 5 L25 43 H37 L17 68 H39 L29 85 H71 L61 68 H83 L63 43 H75 Z"
+      fill="#278f8d" stroke="#ffe2c1" stroke-width="2.5"/>
+    <rect x="44" y="84" width="12" height="12" rx="2" fill="#a85e40"/>
+    <circle cx="50" cy="7" r="6" fill="#ffd06d"/>
+    <circle cx="38" cy="52" r="4" fill="#ffb18d"/>
+    <circle cx="61" cy="61" r="4" fill="#ffd06d"/>
+    <circle cx="46" cy="74" r="4" fill="#ffe2c1"/>
+  </svg>`,
+
+  // SUCRE D'ORGE
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M65 90 V35 A25 25 0 0 0 15 35"
+      fill="none" stroke="#ffe2c1" stroke-width="18" stroke-linecap="round"/>
+    <path d="M65 90 V35 A25 25 0 0 0 15 35"
+      fill="none" stroke="#b63f5f" stroke-width="18"
+      stroke-dasharray="12 17"/>
+  </svg>`,
+
+  // BONHOMME EN PAIN D'ÉPICES
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="22" r="15"
+      fill="#c9824f" stroke="#ffe2c1" stroke-width="3"/>
+    <path d="M35 42 Q50 35 65 42 L70 67 L84 77 L77 86 L62 76 L60 94 H40 L38 76 L23 86 L16 77 L30 67 Z"
+      fill="#c9824f" stroke="#ffe2c1" stroke-width="3"/>
+    <circle cx="44" cy="21" r="2" fill="#812b45"/>
+    <circle cx="56" cy="21" r="2" fill="#812b45"/>
+    <path d="M44 29 Q50 35 56 29"
+      fill="none" stroke="#ffe2c1" stroke-width="2"/>
+    <circle cx="50" cy="49" r="3.5" fill="#278f8d"/>
+    <circle cx="50" cy="63" r="3.5" fill="#278f8d"/>
+    <path d="M39 45 L47 42 L50 47 L53 42 L61 45"
+      fill="none" stroke="#ffe2c1" stroke-width="2"/>
+  </svg>`,
+
+  // ÉTOILE
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 5 L61 37 L95 37 L68 57 L79 90 L50 70 L21 90 L32 57 L5 37 L39 37 Z"
+      fill="#f5bc65" stroke="#ffe2c1" stroke-width="3"/>
+    <circle cx="50" cy="49" r="7" fill="#ffdf9a"/>
+  </svg>`,
+
+  // BOULE DE NOËL
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 5 V16"
+      fill="none" stroke="#ffe2c1" stroke-width="3"/>
+    <rect x="41" y="14" width="18" height="10" rx="2" fill="#f5bc65"/>
+    <circle cx="50" cy="58" r="33"
+      fill="#278f8d" stroke="#ffe2c1" stroke-width="3"/>
+    <path d="M24 45 Q50 25 76 45"
+      fill="none" stroke="#ffb18d" stroke-width="5"/>
+    <path d="M24 70 Q50 48 76 70"
+      fill="none" stroke="#ffb18d" stroke-width="5"/>
+    <circle cx="50" cy="56" r="7" fill="#f5bc65"/>
+  </svg>`,
+
+  // CADEAU
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="16" y="40" width="68" height="50" rx="4"
+      fill="#278f8d" stroke="#ffe2c1" stroke-width="3"/>
+    <rect x="11" y="31" width="78" height="16" rx="3"
+      fill="#f5bc65"/>
+    <path d="M50 31 C18 7 17 52 50 35 C83 52 82 7 50 31 Z"
+      fill="#ffb18d" stroke="#ffe2c1" stroke-width="2"/>
+    <path d="M50 35 V90"
+      stroke="#ffb18d" stroke-width="8"/>
+  </svg>`,
+
+  // HOUX
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 50 Q16 5 8 25 L22 39 L10 47 L33 57 L37 77 L53 60 Z"
+      fill="#278f8d" stroke="#ffe2c1" stroke-width="2"/>
+    <path d="M50 50 Q83 5 94 25 L78 39 L91 47 L66 57 L62 77 L47 60 Z"
+      fill="#236c65" stroke="#ffe2c1" stroke-width="2"/>
+    <circle cx="42" cy="62" r="10" fill="#e58d77"/>
+    <circle cx="60" cy="62" r="10" fill="#d65b72"/>
+    <circle cx="51" cy="76" r="10" fill="#f3a18c"/>
+  </svg>`,
+
+  // MOUFLE
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M32 81 L27 46 Q25 25 43 21 Q63 18 66 39 L66 47 Q76 29 87 40 Q97 53 77 67 L67 85 Z"
+      fill="#278f8d" stroke="#ffe2c1" stroke-width="3"/>
+    <path d="M29 77 L68 80 L68 94 L31 92 Z"
+      fill="#ffb18d" stroke="#ffe2c1" stroke-width="2"/>
+    <path d="M40 47 L54 47 M47 40 L47 54"
+      stroke="#ffe2c1" stroke-width="3" stroke-linecap="round"/>
+  </svg>`,
+
+  // CLOCHE
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 16 C27 16 25 38 25 60 L15 76 H85 L75 60 C75 38 73 16 50 16 Z"
+      fill="#f5bc65" stroke="#ffe2c1" stroke-width="3"/>
+    <circle cx="50" cy="83" r="9" fill="#ffb18d"/>
+    <path d="M37 31 Q50 24 63 31"
+      fill="none" stroke="#ffe2c1" stroke-width="3"/>
+    <path d="M37 16 Q50 3 63 16"
+      fill="none" stroke="#278f8d" stroke-width="5"/>
+  </svg>`
+];
+
+// ==========================================
+// 4. COULEURS DES CASES
+// ==========================================
+
+const themes = [
+  "green", "red", "brown", "gold", "cream",
+  "green", "brown", "red", "gold", "green",
+  "cream", "red", "brown", "green", "gold",
+  "red", "green", "brown"
+];
+
+// ==========================================
+// 5. OUVERTURE PROGRESSIVE EN DÉCEMBRE 2026
+// ==========================================
+
+const ANNEE_CALENDRIER = 2026;
+const grid = document.getElementById("calendar");
+const cases = new Map();
+
+// La date est interprétée dans le fuseau horaire français.
+function dateEnFrance() {
+  const morceaux = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Paris",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+
+  const valeurs = Object.fromEntries(
+    morceaux.filter(part => part.type !== "literal")
+      .map(part => [part.type, Number(part.value)])
+  );
+  return valeurs.year * 10000 + valeurs.month * 100 + valeurs.day;
+}
+
+function caseAccessible(jour) {
+  return dateEnFrance() >= ANNEE_CALENDRIER * 10000 + 1200 + jour;
+}
+
+function actualiserVerrous() {
+  joursOuvres.forEach(jour => {
+    const element = cases.get(jour);
+    const verrouillee = !caseAccessible(jour);
+    element.classList.toggle("locked", verrouillee);
+    // Une ancienne visite ne doit jamais apparaître sur une case future.
+    let dejaVisitee = false;
+    try {
+      dejaVisitee = localStorage.getItem("avent2026_" + jour) === "opened";
+    } catch (error) {
+      // Le calendrier fonctionne même si le stockage est désactivé.
+    }
+    element.classList.toggle("opened", !verrouillee && dejaVisitee);
+    element.setAttribute("aria-label", verrouillee
+      ? `Jour ${jour} : disponible le ${jour} décembre ${ANNEE_CALENDRIER}`
+      : `Ouvrir le jour ${jour}`);
+  });
+}
+
+joursOuvres.forEach((jour, index) => {
+  const day = document.createElement("button");
+  day.type = "button";
+  day.className = "day " + themes[index];
+
+  const number = document.createElement("span");
+  number.className = "day-number";
+  number.textContent = jour;
+
+  const illustration = document.createElement("span");
+  illustration.className = "illustration";
+  illustration.setAttribute("aria-hidden", "true");
+  illustration.innerHTML = illustrations[index % illustrations.length];
+
+  const cadenas = document.createElement("span");
+  cadenas.className = "lock-icon";
+  cadenas.setAttribute("aria-hidden", "true");
+  cadenas.textContent = "🔒";
+
+  day.append(number, illustration, cadenas);
+
+  day.addEventListener("click", () => {
+    // Vérification au moment exact du clic, pas seulement au chargement.
+    if (!caseAccessible(jour)) {
+      alert(`Patience ! La case ${jour} s'ouvrira le ${jour} décembre ${ANNEE_CALENDRIER}.`);
+      return;
+    }
+
+    const url = liens[jour];
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+      day.classList.add("opened");
+      try {
+        localStorage.setItem("avent2026_" + jour, "opened");
+      } catch (error) {
+        // Le calendrier reste utilisable sans stockage local.
+      }
+    }
+  });
+
+  // L’état visité est restauré uniquement si la date est accessible,
+  // par actualiserVerrous() après la création de toutes les cases.
+  cases.set(jour, day);
+  grid.appendChild(day);
+});
+
+actualiserVerrous();
+// Mise à jour sans avoir besoin de recharger la page à minuit.
+setInterval(actualiserVerrous, 30000);
+window.addEventListener("focus", actualiserVerrous);
+document.addEventListener("visibilitychange", actualiserVerrous);
+
+// ==========================================
+// 6. FLOCONS DE NEIGE
+// ==========================================
+
+function createSnowflake() {
+  const snow = document.createElement("span");
+  snow.className = "snow";
+  snow.textContent = "❄";
+
+  snow.style.left = Math.random() * 100 + "vw";
+  snow.style.fontSize = (8 + Math.random() * 12) + "px";
+  snow.style.opacity = (0.15 + Math.random() * 0.45);
+  snow.style.animationDuration = (7 + Math.random() * 7) + "s";
+
+  document.body.appendChild(snow);
+
+  snow.addEventListener("animationend", () => {
+    snow.remove();
+  });
+}
+
+if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  setInterval(createSnowflake, 600);
+}
+
+</script>
+
+</body>
+</html>
